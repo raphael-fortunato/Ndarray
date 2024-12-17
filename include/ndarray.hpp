@@ -16,7 +16,6 @@ class Ndarray {
     dtype* m_end_itr;
     dtype* m_start_itr;
     std::vector<std::size_t> m_shape;
-    std::vector<std::size_t> m_strides;
     size_t m_size = 1;
 
     void allocate_data() { m_start_itr = new dtype[m_size]; }
@@ -28,12 +27,16 @@ class Ndarray {
     }
 
    public:
-    Ndarray(std::vector<std::size_t> shape) : m_shape(shape) {
+    explicit Ndarray(std::vector<std::size_t> shape) : m_shape(shape) {
         m_compute_size();
         allocate_data();
         m_end_itr = m_start_itr + m_size;
     }
-    ~Ndarray() { delete[] m_start_itr; }
+    ~Ndarray() {
+        delete[] m_start_itr;
+        m_shape.clear();
+    }
+    Ndarray(const Ndarray& other) {}
 
     size_t size() const { return m_size; }
 

@@ -14,11 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 include_directories(include)
 
 file(GLOB SRC_FILES src/*.cpp)
-add_library(NDArrayLib ${SRC_FILES})
-
-# Add the main executable target
-add_executable(NDArray src/main.cpp)
-target_link_libraries(NDArray PRIVATE NDArrayLib)
+add_library(NDArray STATIC ${SRC_FILES})
 
 # Add the tests directory (optional, if you have tests)
 add_subdirectory(test)

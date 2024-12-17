@@ -12,7 +12,7 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 # Link the main project's library to the tests
 target_link_libraries(TestNDArray PRIVATE gtest gtest_main)
-target_link_libraries(TestNDArray PRIVATE NDArrayLib)
+target_link_libraries(TestNDArray PRIVATE NDArray)
 
 # Add test cases (if using a testing framework like Google Test, Catch2, etc.)
 enable_testing()
