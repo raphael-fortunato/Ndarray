@@ -5,6 +5,7 @@
  */
 #pragma once
 
+#include <algorithm>
 #include <cstddef>
 #include <iterator>
 #include <vector>
@@ -36,7 +37,17 @@ class Ndarray {
         delete[] m_start_itr;
         m_shape.clear();
     }
-    Ndarray(const Ndarray& other) {}
+    Ndarray(const Ndarray& other) {
+        // copy shape
+        std::copy(other.m_shape.begin(), other.m_shape.end(),
+                  std::back_inserter(m_shape));
+        m_compute_size();
+        assert(m_size == other.m_size);
+        // Copy data
+        m_start_itr = new dtype[other.m_size];
+        m_end_itr = m_start_itr + other.m_size;
+        std::copy(other.m_start_itr, other.m_end_itr, m_start_itr);
+    }
 
     size_t size() const { return m_size; }
 

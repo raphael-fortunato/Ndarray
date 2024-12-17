@@ -47,7 +47,9 @@ TEST(NdarrayTest, TestConstruction) {
 }
 
 TEST(NdarrayTest, TestCopyConstructor) {
-    Ndarray<double> test_array({2, 3, 4});
-    EXPECT_EQ(test_array.get_end_itr() - test_array.get_start_itr(),
-              test_array.size());
+    Ndarray<double> test_array1({2, 3, 4});
+    Ndarray<double> test_array2 = test_array1;
+    EXPECT_EQ(test_array1.size(), test_array2.size());
+    EXPECT_EQ(test_array1.get_end_itr() - test_array1.get_start_itr(),
+              test_array2.get_end_itr() - test_array2.get_start_itr());
 }
