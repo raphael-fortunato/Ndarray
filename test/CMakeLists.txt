@@ -2,6 +2,7 @@ file(GLOB TEST_FILES *.cpp)
 # Add an executable for testing
 add_executable(TestNDArray ${TEST_FILES})
 
+set(gtest_force_shared_crt on)
 include(FetchContent)
 FetchContent_Declare(
   googletest
