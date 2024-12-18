@@ -1,2 +1,3 @@
 build/*
 .cache
+complie_commands.json
