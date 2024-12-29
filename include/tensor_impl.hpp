@@ -1,9 +1,11 @@
 
+#include <algorithm>
 #include <array>
 #include <cstddef>
 #include <initializer_list>
 #include <queue>
 #include <type_traits>
+
 namespace tensor_impl {
 template <typename dtype, std::size_t N>
 struct tensor_init {
@@ -54,6 +56,25 @@ std::array<std::size_t, N> derive_shape(const List& init_list) {
     auto f = a.begin();
     add_extended_shape<N>(init_list, f);
     return a;
+}
+
+template <typename T, typename dtype>
+void add_flattened_data(const T* begin, const T* end, dtype*& ptr) {
+    std::copy(begin, end, ptr);
+    ptr += end - begin;
+}
+
+template <typename T, typename dtype>
+void add_flattened_data(const std::initializer_list<T>* begin,
+                        const std::initializer_list<T>* end, dtype*& ptr) {
+    for (; begin != end; begin++) {
+        add_flattened_data(begin->begin(), begin->end(), ptr);
+    }
+}
+
+template <typename T, typename dtype>
+void insert_flat(std::initializer_list<T> data, dtype* ptr) {
+    add_flattened_data(data.begin(), data.end(), ptr);
 }
 
 }  // namespace tensor_impl

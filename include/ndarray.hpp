@@ -17,6 +17,9 @@
 namespace ndarray {
 template <typename dtype, size_t N>
 class Ndarray {
+   public:
+    using value_type = dtype;
+
    private:
     dtype* m_end_itr;
     dtype* m_data;
@@ -45,6 +48,7 @@ class Ndarray {
         m_shape = tensor_impl::derive_shape<N>(init);
         m_compute_size();
         m_allocate_data();
+        tensor_impl::insert_flat(init, m_data);
     }
     ~Ndarray() { delete[] m_data; }
     Ndarray(const Ndarray& other) {
@@ -89,7 +93,9 @@ class Ndarray {
     dtype* cbegin() const { return m_data; }
     dtype* cend() const { return m_end_itr; }
     dtype* begin() { return m_data; }
+    const dtype* begin() const { return m_data; }
     dtype* end() { return m_end_itr; }
+    const dtype* end() const { return m_end_itr; }
     size_t size() const { return m_size; }
     const std::array<std::size_t, N>& shape() const { return m_shape; }
 };
