@@ -1,12 +1,14 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cstddef>
 #include <initializer_list>
 #include <queue>
 #include <type_traits>
 
 namespace tensor_impl {
+
 template <typename dtype, std::size_t N>
 struct tensor_init {
     using type =
@@ -41,11 +43,23 @@ enable_if_t<(N == 1), void> add_extended_shape(const List& list, l& first) {
     *first++ = list.size();
 }
 
+template <typename T>
+constexpr bool check_non_jagged_list(const std::initializer_list<T>& list) {
+    auto i = list.begin();
+    for (auto j = i + 1; j != list.end(); ++j) {
+        if (i->size() != j->size()) {
+            return false;
+        }
+    }
+    return true;
+}
+
 template <size_t N, typename Nested_List, typename l>
 enable_if_t<(N > 1), void> add_extended_shape(const Nested_List& nested_list,
                                               l& first) {
     static_assert(N > 1,
                   "This function should only be instantiated for N > 1.");
+    assert(check_non_jagged_list(nested_list) && "Jagged list dectected");
     *first = nested_list.size();
     add_extended_shape<N - 1>(*nested_list.begin(), ++first);
 }
