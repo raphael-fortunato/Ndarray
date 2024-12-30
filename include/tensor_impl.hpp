@@ -65,8 +65,9 @@ enable_if_t<(N > 1), void> add_extended_shape(const Nested_List& nested_list,
 }
 
 template <size_t N, typename List>
-std::array<std::size_t, N> derive_shape(const List& init_list) {
-    std::array<std::size_t, N> a;
+std::vector<std::size_t> derive_shape(const List& init_list) {
+    std::vector<std::size_t> a;
+    a.resize(N);
     auto f = a.begin();
     add_extended_shape<N>(init_list, f);
     return a;
