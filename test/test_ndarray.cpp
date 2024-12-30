@@ -73,7 +73,15 @@ TEST(NdarrayTest, TestSize) {
 }
 TEST(NdarrayTest, TestCopyConstructor) {
     Ndarray<double, 1> test_array1{2, 3, 4};
-    auto test_array2 = test_array1;
+    auto test_array2{test_array1};
+    EXPECT_EQ(test_array1.size(), test_array2.size());
+    EXPECT_EQ(test_array1.cend() - test_array1.cbegin(),
+              test_array2.cend() - test_array2.cbegin());
+}
+TEST(NdarrayTest, TestCopyAssignment) {
+    Ndarray<double, 1> test_array1{2, 3, 4, 5};
+    Ndarray<double, 1> test_array2 = {5, 6, 7};
+    test_array2 = test_array1;
     EXPECT_EQ(test_array1.size(), test_array2.size());
     EXPECT_EQ(test_array1.cend() - test_array1.cbegin(),
               test_array2.cend() - test_array2.cbegin());
@@ -86,4 +94,24 @@ TEST(NdarrayTest, TestMoveConstructor) {
     EXPECT_EQ(test_array1.size(), 0);
     EXPECT_EQ(test_array2.size(), 3);
     EXPECT_EQ(test_array2.cend() - test_array2.cbegin(), test_array2.size());
+}
+
+TEST(NdarrayTest, TestStrides) {
+    Ndarray<double, 3> test_array = {{{12.5, 13.5, 14.5, 15.5},
+                                      {16.5, 17.5, 18.5, 19.5},
+                                      {20.5, 21.5, 22.5, 23.5}},
+                                     {{24.5, 25.5, 26.5, 27.5},
+                                      {28.5, 29.5, 30.5, 31.5},
+                                      {32.5, 33.5, 34.5, 35.5}}};
+    ASSERT_THAT(test_array.strides(), ::testing::ElementsAre(12, 4, 1));
+
+    Ndarray<int, 1> test_array2{2, 3, 4, 5};
+    ASSERT_THAT(test_array2.strides(), ::testing::ElementsAre(1));
+
+    Ndarray<char, 5> test_array3{{{{{{1, 2, 3, 4, 5}}}}}};
+    ASSERT_THAT(test_array3.strides(), ::testing::ElementsAre(5, 5, 5, 5, 1));
+
+    Ndarray<int, 4> test_array4{{{{1, 2}, {3, 4}}, {{5, 6}, {7, 8}}},
+                                {{{9, 10}, {11, 12}}, {{13, 14}, {15, 16}}}};
+    ASSERT_THAT(test_array4.strides(), ::testing::ElementsAre(8, 4, 2, 1));
 }
