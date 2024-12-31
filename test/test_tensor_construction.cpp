@@ -108,6 +108,16 @@ TEST(TensorTest, TestMoveConstructor) {
     EXPECT_EQ(test_array2.cend() - test_array2.cbegin(), test_array2.size());
 }
 
+TEST(TensorTest, TestMoveAssignment) {
+    Tensor<double, 1> test_array1{2, 3, 4};
+    Tensor<double, 1> test_array2{5, 6, 7};
+    test_array2 = std::move(test_array1);
+    EXPECT_EQ(test_array1.begin(), nullptr);
+    EXPECT_EQ(test_array1.end(), nullptr);
+    EXPECT_EQ(test_array1.size(), 0);
+    EXPECT_EQ(test_array2.size(), 3);
+    EXPECT_EQ(test_array2.cend() - test_array2.cbegin(), test_array2.size());
+}
 TEST(TensorTest, TestStrides) {
     Tensor<double, 3> test_array{{{12.5, 13.5, 14.5, 15.5},
                                   {16.5, 17.5, 18.5, 19.5},

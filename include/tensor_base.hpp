@@ -1,5 +1,6 @@
 #pragma once
 #include <cstddef>
+#include <cstdio>
 #include <vector>
 
 #include "tensor_impl.hpp"
@@ -50,6 +51,21 @@ class TensorBase {
         other.m_data = nullptr;
         other.m_end_itr = nullptr;
     }
+    TensorBase& operator=(TensorBase&& other) noexcept {
+        printf("Base Move assignment\n");
+        if (this != &other) {
+            // copy shape
+            m_data = other.m_data;
+            m_end_itr = other.m_end_itr;
+            m_shape = std::move(other.m_shape);
+            m_size = other.m_size;
+
+            other.m_size = 0;
+            other.m_data = nullptr;
+            other.m_end_itr = nullptr;
+        }
+        return *this;
+    }
 
     using value_type = dtype;
     virtual ~TensorBase() {};
@@ -67,7 +83,7 @@ class TensorBase {
     dtype* m_end_itr;
     std::vector<std::size_t> m_shape;
     std::vector<std::size_t> m_strides;
-    size_t m_size = 0;
+    std::size_t m_size = 0;
 };
 
 }  // namespace tensor

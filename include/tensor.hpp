@@ -49,6 +49,14 @@ class Tensor : public TensorBase<dtype, N> {
     Tensor(Tensor&& other) noexcept : TensorBase<dtype, N>(std::move(other)) {
         printf("Move constructor\n");
     }
+    Tensor& operator=(Tensor&& other) noexcept {
+        printf("Move assignment\n");
+        if (this != &other) {
+            delete[] this->m_data;
+            TensorBase<dtype, N>::operator=(std::move(other));
+        }
+        return *this;
+    }
 
    private:
     void m_allocate_data() {
