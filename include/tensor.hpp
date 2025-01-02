@@ -8,10 +8,9 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdio>
-#include <iterator>
+#include <functional>
 #include <numeric>
 #include <utility>
-#include <vector>
 
 #include "tensor_base.hpp"
 #include "tensor_impl.hpp"
@@ -32,7 +31,7 @@ class Tensor : public TensorBase<dtype, N> {
     }
     ~Tensor() override {
         printf("Destructor\n");
-        delete[] this->m_data;
+        delete this->m_data;
     }
     Tensor& operator=(const Tensor& other) {
         printf("Copy assignment\n");
@@ -52,7 +51,7 @@ class Tensor : public TensorBase<dtype, N> {
     Tensor& operator=(Tensor&& other) noexcept {
         printf("Move assignment\n");
         if (this != &other) {
-            delete[] this->m_data;
+            delete this->m_data;
             TensorBase<dtype, N>::operator=(std::move(other));
         }
         return *this;
@@ -66,8 +65,8 @@ class Tensor : public TensorBase<dtype, N> {
 
     void m_compute_size() {
         this->m_size =
-            std::accumulate(this->m_shape.begin(), this->m_shape.end(), 1,
-                            std::multiplies<std::size_t>());
+            std::accumulate(this->m_shape.begin(), this->m_shape.end(),
+                            size_t(1), std::multiplies<>());
     }
     void m_compute_strides() {
         this->m_strides.resize(this->m_shape.size());

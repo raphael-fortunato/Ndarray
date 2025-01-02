@@ -1,11 +1,8 @@
 #pragma once
 #include <algorithm>
-#include <array>
 #include <cassert>
 #include <cstddef>
 #include <initializer_list>
-#include <queue>
-#include <type_traits>
 
 namespace tensor_impl {
 

@@ -1,9 +1,8 @@
 #pragma once
+#include <cassert>
 #include <cstddef>
 #include <cstdio>
 #include <vector>
-
-#include "tensor_impl.hpp"
 
 namespace tensor {
 
@@ -68,7 +67,7 @@ class TensorBase {
     }
 
     using value_type = dtype;
-    virtual ~TensorBase() {};
+    virtual ~TensorBase() {}
     dtype* cbegin() const { return m_data; }
     dtype* cend() const { return m_end_itr; }
     const dtype* begin() const { return m_data; }
