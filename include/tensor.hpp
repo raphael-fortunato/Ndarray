@@ -30,6 +30,18 @@ class Tensor : public TensorBase<dtype, N> {
         this->m_strides = tensor_impl::m_compute_strides(this->m_shape);
         assert(this->end() - this->begin() == this->size());
     }
+
+    template <typename... Args>
+        requires tensor_impl::AllConvertibleToSizeT<Args...>
+    explicit Tensor(Args... args) {
+        printf("Constructor\n");
+        this->m_shape = {static_cast<std::size_t>(args)...};
+        this->m_size = tensor_impl::m_compute_size(this->m_shape);
+        m_allocate_data();
+        this->m_strides = tensor_impl::m_compute_strides(this->m_shape);
+        assert(this->end() - this->begin() == this->size());
+    }
+
     ~Tensor() override {
         printf("Destructor\n");
         delete[] this->m_data;

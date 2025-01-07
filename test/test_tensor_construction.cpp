@@ -135,3 +135,21 @@ TEST(TensorTest, TestStrides) {
                                {{{9, 10}, {11, 12}}, {{13, 14}, {15, 16}}}};
     ASSERT_THAT(test_array4.strides(), ::testing::ElementsAre(8, 4, 2, 1));
 }
+
+TEST(TensorTest, TestShapeConstructor) {
+    Tensor<double, 4> test_array(1, 1, 128, 128);
+    ASSERT_THAT(test_array.shape(), ::testing::ElementsAre(1, 1, 128, 128));
+    ASSERT_EQ(test_array.size(), 128 * 128);
+
+    Tensor<double, 3> test_array2(2, 56, 56);
+    ASSERT_THAT(test_array2.shape(), ::testing::ElementsAre(2, 56, 56));
+    ASSERT_EQ(test_array2.size(), 2 * 56 * 56);
+
+    Tensor<double, 2> test_array3(4, 4);
+    ASSERT_THAT(test_array3.shape(), ::testing::ElementsAre(4, 4));
+    ASSERT_EQ(test_array3.size(), 16);
+
+    Tensor<double, 1> test_array4(100);
+    ASSERT_THAT(test_array4.shape(), ::testing::ElementsAre(100));
+    ASSERT_EQ(test_array4.size(), 100);
+}
