@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cstddef>
 #include <initializer_list>
+#include <numeric>
 
 namespace tensor_impl {
 
@@ -32,6 +33,25 @@ struct enable_if<true, T> {
 };
 template <bool B, class T = void>
 using enable_if_t = typename enable_if<B, T>::type;
+
+template <typename... Args>
+concept AllConvertibleToSizeT = (std::convertible_to<Args, std::size_t> && ...);
+
+template <std::size_t N, typename... Args>
+concept ValidateTensorRefReturn =
+    (sizeof...(Args) < N) && AllConvertibleToSizeT<Args...>;
+
+template <std::size_t N, typename... Args>
+concept ValidateElementReturn =
+    (sizeof...(Args) == N) && AllConvertibleToSizeT<Args...>;
+
+template <std::size_t N>
+bool check_bounds(const std::vector<std::size_t>& s,
+                  const std::vector<std::size_t>& shape) {
+    return std::all_of(s.begin(), s.end(), [&, i = 0](std::size_t dim) mutable {
+        return i < shape[i++];
+    });
+}
 
 template <size_t N, typename List, typename l>
 enable_if_t<(N == 1), void> add_extended_shape(const List& list, l& first) {
@@ -88,5 +108,50 @@ template <typename T, typename dtype>
 void insert_flat(std::initializer_list<T> data, dtype* ptr) {
     add_flattened_data(data.begin(), data.end(), ptr);
 }
+
+inline std::size_t m_compute_size(const std::vector<std::size_t>& shape) {
+    return std::accumulate(shape.begin(), shape.end(), size_t(1),
+                           std::multiplies<>());
+}
+
+inline std::vector<std::size_t> m_compute_strides(
+    const std::vector<std::size_t>& shape) {
+    std::vector<std::size_t> strides(shape.size());
+    if (shape.empty()) {
+        return strides;
+    }
+    strides.back() = 1;
+    for (int i = strides.size() - 2; i >= 0; --i) {
+        strides[i] = shape[i + 1] * strides[i + 1];
+    }
+    return strides;
+}
+
+// TODO implement check on slicing
+// constexpr bool all() { return true; }
+//
+// template <typename... Args>
+// constexpr bool all(bool b, Args... args) {
+//     return b && all(args...);
+// }
+//
+// constexpr bool some() { return false; }
+//
+// template <typename... Args>
+// constexpr bool some(bool b, Args... args) {
+//     return b || some(args...);
+// }
+//
+// template <typename... Args>
+// constexpr bool requesting_element() {
+//     return all(std::is_convertible<Args, std::size_t>()...);
+// }
+//
+// template <typename... Args>
+// constexpr bool requesting_slice() {
+//     return all((std::is_convertible<Args, std::size_t>() ||
+//                 std::is_same<Args, slice::slice>())...) &&
+//            some(std::is_same<Args, slice::slice>()...);
+// }
 
 }  // namespace tensor_impl

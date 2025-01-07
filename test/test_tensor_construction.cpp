@@ -6,7 +6,7 @@
 using namespace tensor;
 
 TEST(TensorTest, TestEmptyArray) {
-    Tensor<double, 1> test_array{};
+    Tensor<double, 1> test_array({});
     ASSERT_THAT(test_array.size(), ::testing::Eq(0));
     ASSERT_EQ(test_array.end() - test_array.begin(), test_array.size());
 }

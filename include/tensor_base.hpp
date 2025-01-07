@@ -2,11 +2,11 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
-#include <vector>
+#include <tensor_impl.hpp>
 
 namespace tensor {
 
-template <typename dtype, size_t N>
+template <typename dtype, std::size_t N>
 class TensorBase {
    public:
     TensorBase(const TensorBase& other) {
@@ -75,14 +75,17 @@ class TensorBase {
     size_t size() const { return m_size; }
     const std::vector<std::size_t>& shape() const { return m_shape; }
     const std::vector<std::size_t>& strides() const { return m_strides; }
+    const std::vector<dtype> data() const {
+        return std::vector<dtype>(m_data, m_data + m_size);
+    }
 
    protected:
     TensorBase() = default;
     dtype* m_data;
     dtype* m_end_itr;
+    std::size_t m_size = 0;
     std::vector<std::size_t> m_shape;
     std::vector<std::size_t> m_strides;
-    std::size_t m_size = 0;
 };
 
 }  // namespace tensor
