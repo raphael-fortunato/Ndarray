@@ -5,6 +5,7 @@
 #include <initializer_list>
 #include <numeric>
 
+namespace tensor {
 namespace tensor_impl {
 
 template <typename dtype, std::size_t N>
@@ -109,6 +110,8 @@ void insert_flat(std::initializer_list<T> data, dtype* ptr) {
     add_flattened_data(data.begin(), data.end(), ptr);
 }
 
+}  // namespace tensor_impl
+
 inline std::size_t m_compute_size(const std::vector<std::size_t>& shape) {
     return std::accumulate(shape.begin(), shape.end(), size_t(1),
                            std::multiplies<>());
@@ -127,6 +130,8 @@ inline std::vector<std::size_t> m_compute_strides(
     return strides;
 }
 
+}  // namespace tensor
+//
 // TODO implement check on slicing
 // constexpr bool all() { return true; }
 //
@@ -154,4 +159,3 @@ inline std::vector<std::size_t> m_compute_strides(
 //            some(std::is_same<Args, slice::slice>()...);
 // }
 
-}  // namespace tensor_impl

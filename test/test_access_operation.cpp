@@ -67,3 +67,18 @@ TEST(TensorTest, TestTensorRefAccess) {
     ASSERT_THAT(test_array4(1, 0, 1).shape(), testing::ElementsAre(2));
     ASSERT_THAT(test_array4(1, 0, 1), testing::ElementsAre(22.5, 23.5));
 }
+
+TEST(TensorTest, TestTensorRefAccess2) {
+    Tensor<double, 4> test_array{
+        {{{12.5, 13.5}, {14.5, 15.5}}, {{16.5, 17.5}, {18.5, 19.5}}},
+        {{{20.5, 21.5}, {22.5, 23.5}}, {{24.5, 25.5}, {26.5, 27.5}}}};
+    TensorRef tensor_ref = test_array(1);
+    ASSERT_THAT(tensor_ref.shape(), testing::ElementsAre(2, 2, 2));
+    TensorRef tensor_ref2 = tensor_ref(0);
+    ASSERT_THAT(tensor_ref2.shape(), testing::ElementsAre(2, 2));
+    TensorRef tensor_ref3 = tensor_ref2(1);
+    ASSERT_THAT(tensor_ref3.shape(), testing::ElementsAre(2));
+    ASSERT_THAT(tensor_ref3, testing::ElementsAre(22.5, 23.5));
+    double elem = tensor_ref3(1);
+    ASSERT_EQ(elem, 23.5);
+}

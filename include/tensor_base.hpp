@@ -7,6 +7,12 @@
 namespace tensor {
 
 template <typename dtype, std::size_t N>
+class TensorRef;
+
+template <typename dtype, std::size_t N>
+class Tensor;
+
+template <typename dtype, std::size_t N>
 class TensorBase {
    public:
     TensorBase(const TensorBase& other) {
@@ -64,6 +70,46 @@ class TensorBase {
             other.m_end_itr = nullptr;
         }
         return *this;
+    }
+
+    template <typename... Args>
+        requires tensor_impl::ValidateElementReturn<N, Args...>
+    dtype operator()(Args&&... args) {
+        static_assert(sizeof...(args) == N, "Invalid number of arguments");
+        const std::array<std::size_t, N> indices{
+            static_cast<std::size_t>(args)...};
+        std::size_t linear_index = 0;
+        for (std::size_t i = 0; i < N; ++i) {
+            if (indices[i] >= this->m_shape[i]) {
+                throw std::out_of_range("Index out of range");
+            }
+            linear_index += indices[i] * this->m_strides[i];
+        }
+
+        return this->m_data[linear_index];
+    }
+
+    template <typename... Args>
+        requires tensor_impl::ValidateTensorRefReturn<N, Args...>
+    TensorRef<dtype, N - sizeof...(Args)> operator()(Args&&... args) {
+        static_assert(sizeof...(args) < N, "Invalid number of arguments");
+        std::array<std::size_t, sizeof...(args)> indices{
+            static_cast<std::size_t>(args)...};
+
+        std::vector<std::size_t> new_shape(
+            this->m_shape.begin() + indices.size(), this->m_shape.end());
+        std::vector<std::size_t> new_strides(
+            this->m_strides.begin() + indices.size(), this->m_strides.end());
+
+        std::size_t offset = 0;
+        for (std::size_t i = 0; i < indices.size(); ++i) {
+            assert(indices[i] < this->m_shape[i] &&
+                   "Index out of bounds: index exceeds shape dimension");
+            offset += indices[i] * this->m_strides[i];
+        }
+        return TensorRef<dtype, N - sizeof...(Args)>(this->m_data + offset,
+                                                     std::move(new_shape),
+                                                     std::move(new_strides));
     }
 
     using value_type = dtype;
