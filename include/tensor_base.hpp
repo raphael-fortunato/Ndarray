@@ -2,6 +2,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
+#include <slice_impl.hpp>
 #include <tensor_impl.hpp>
 
 namespace tensor {
@@ -91,22 +92,18 @@ class TensorBase {
 
     template <typename... Args>
         requires tensor_impl::ValidateTensorRefReturn<N, Args...>
-    TensorRef<dtype, N - sizeof...(Args)> operator()(Args&&... args) {
+    TensorRef<dtype, N - sizeof...(Args)> operator()(const Args&... args) {
         static_assert(sizeof...(args) < N, "Invalid number of arguments");
-        std::array<std::size_t, sizeof...(args)> indices{
-            static_cast<std::size_t>(args)...};
 
-        std::vector<std::size_t> new_shape(
-            this->m_shape.begin() + indices.size(), this->m_shape.end());
+        std::vector<std::size_t> new_shape(this->m_shape.begin(),
+                                           this->m_shape.end());
+
+        std::size_t offset =
+            slice_impl::do_slice(this->m_shape, new_shape, args...);
+
         std::vector<std::size_t> new_strides(
-            this->m_strides.begin() + indices.size(), this->m_strides.end());
+            this->m_strides.begin() + sizeof...(args), this->m_strides.end());
 
-        std::size_t offset = 0;
-        for (std::size_t i = 0; i < indices.size(); ++i) {
-            assert(indices[i] < this->m_shape[i] &&
-                   "Index out of bounds: index exceeds shape dimension");
-            offset += indices[i] * this->m_strides[i];
-        }
         return TensorRef<dtype, N - sizeof...(Args)>(this->m_data + offset,
                                                      std::move(new_shape),
                                                      std::move(new_strides));

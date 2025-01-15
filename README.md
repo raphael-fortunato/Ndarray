@@ -1,8 +1,8 @@
 **IN EARLY DEVELOPMENT**
 
-# NDArray: An N-Dimensional Matrix Library for C++
+# TensorLib++: An N-Dimensional Matrix Library for C++
 
-NDArray is a lightweight and flexible C++ library for working with
+TensorLib++ is a lightweight and flexible C++ library for working with
 N-dimensional matrices (tensors). It provides a dynamic, efficient, and
 user-friendly way to manage and manipulate multi-dimensional arrays, inspired
 by libraries like NumPy.

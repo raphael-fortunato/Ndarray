@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <initializer_list>
 #include <numeric>
+#include <slice.hpp>
 
 namespace tensor {
 namespace tensor_impl {
@@ -35,12 +36,16 @@ struct enable_if<true, T> {
 template <bool B, class T = void>
 using enable_if_t = typename enable_if<B, T>::type;
 
+template <typename T>
+concept ValidArgs =
+    std::is_convertible_v<T, std::size_t> || std::is_same_v<T, slice::slice>;
+
 template <typename... Args>
 concept AllConvertibleToSizeT = (std::convertible_to<Args, std::size_t> && ...);
 
 template <std::size_t N, typename... Args>
 concept ValidateTensorRefReturn =
-    (sizeof...(Args) < N) && AllConvertibleToSizeT<Args...>;
+    (sizeof...(Args) < N) && (ValidArgs<Args> && ...);
 
 template <std::size_t N, typename... Args>
 concept ValidateElementReturn =
@@ -132,30 +137,4 @@ inline std::vector<std::size_t> m_compute_strides(
 
 }  // namespace tensor
 //
-// TODO implement check on slicing
-// constexpr bool all() { return true; }
-//
-// template <typename... Args>
-// constexpr bool all(bool b, Args... args) {
-//     return b && all(args...);
-// }
-//
-// constexpr bool some() { return false; }
-//
-// template <typename... Args>
-// constexpr bool some(bool b, Args... args) {
-//     return b || some(args...);
-// }
-//
-// template <typename... Args>
-// constexpr bool requesting_element() {
-//     return all(std::is_convertible<Args, std::size_t>()...);
-// }
-//
-// template <typename... Args>
-// constexpr bool requesting_slice() {
-//     return all((std::is_convertible<Args, std::size_t>() ||
-//                 std::is_same<Args, slice::slice>())...) &&
-//            some(std::is_same<Args, slice::slice>()...);
-// }
 

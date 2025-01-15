@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "gmock/gmock.h"
+#include "slice.hpp"
 #include "tensor.hpp"
 
 using namespace tensor;
@@ -81,4 +82,22 @@ TEST(TensorTest, TestTensorRefAccess2) {
     ASSERT_THAT(tensor_ref3, testing::ElementsAre(22.5, 23.5));
     double elem = tensor_ref3(1);
     ASSERT_EQ(elem, 23.5);
+}
+TEST(TensorTest, TestSliceAccess) {
+    // Tensor<double, 3> test_array1(4, 5, 6);
+    // TensorRef tensor_ref = test_array1(1, slice::slice(0, 3));
+    // ASSERT_THAT(tensor_ref.shape(), testing::ElementsAre(3, 6));
+    //
+    // Tensor<int, 3> test_array2(2, 2, 2);
+    // TensorRef tensor_ref2 = test_array2(1, slice::slice(0, 2));
+    // ASSERT_THAT(tensor_ref2.shape(), testing::ElementsAre(2, 2));
+    //
+    // // Test slicing for 4D tensor
+    Tensor<double, 4> test_array3(5, 4, 3, 2);
+    // TensorRef tensor_ref3 = test_array3(1, 2, slice::slice(0, 2));
+    // ASSERT_THAT(tensor_ref3.shape(), testing::ElementsAre(2, 2));
+    //
+    TensorRef tensor_ref4 =
+        test_array3(slice::slice(1, 4), slice::slice(2, 4), 1);
+    ASSERT_THAT(tensor_ref4.shape(), testing::ElementsAre(3, 2, 2));
 }
