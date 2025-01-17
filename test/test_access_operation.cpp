@@ -108,15 +108,25 @@ TEST(TensorTest, TestSliceAccess) {
     TensorRef tensor_ref4 =
         test_array3(slice::slice(1, 3), slice::slice(2, 3), 1);
     ASSERT_THAT(tensor_ref4.shape(), testing::ElementsAre(2, 1, 2));
+    ASSERT_THAT(tensor_ref4.strides(), testing::ElementsAre(24, 6, 1));
 
     std::cout << "Fourth array of shape 5x4x3x2\n" << std::endl;
     TensorRef tensor_ref5 =
         test_array3(slice::slice(0, 5), slice::slice(0, 4), 1);
     ASSERT_THAT(tensor_ref5.shape(), testing::ElementsAre(5, 4, 2));
+    ASSERT_THAT(tensor_ref5.strides(), testing::ElementsAre(24, 6, 1));
 
     TensorRef tensor_ref6 =
         test_array3(slice::slice(0, 0), slice::slice(0, 4), 1);
     ASSERT_THAT(tensor_ref6.shape(), testing::ElementsAre(0, 4, 2));
-    // TensorRef tensor_ref7 = test_array3(slice::slice(), slice::slice(0, 4),
-    // 1); ASSERT_THAT(tensor_ref7.shape(), testing::ElementsAre(5, 4, 2));
+    ASSERT_THAT(tensor_ref6.strides(), testing::ElementsAre(24, 6, 1));
+
+    TensorRef tensor_ref7 = test_array3(slice::slice(), slice::slice(0, 4), 1);
+    ASSERT_THAT(tensor_ref7.shape(), testing::ElementsAre(5, 4, 2));
+    ASSERT_THAT(tensor_ref7.strides(), testing::ElementsAre(24, 6, 1));
+
+    Tensor<double, 3> test_array8(2, 2, 2);
+    TensorRef tensor_ref8 = test_array8(slice::slice(), slice::slice());
+    ASSERT_THAT(tensor_ref8.shape(), testing::ElementsAre(2, 2, 2));
+    ASSERT_THAT(tensor_ref8.strides(), testing::ElementsAre(4, 2, 1));
 }

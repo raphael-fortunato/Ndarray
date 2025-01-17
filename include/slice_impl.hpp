@@ -40,11 +40,15 @@ inline std::size_t do_slice_dim(const std::vector<std::size_t>& os,
                                 std::vector<bool>& keep_dim,
                                 const std::size_t current_dim,
                                 const slice::slice& dim) {
-    if (dim.start > os[current_dim] || dim.stop > os[current_dim]) {
+    std::size_t start =
+        (dim.start == static_cast<std::size_t>(-1)) ? 0 : dim.start;
+    std::size_t stop =
+        (dim.stop == static_cast<std::size_t>(-1)) ? os[current_dim] : dim.stop;
+    if (start > os[current_dim] || stop > os[current_dim]) {
         throw std::out_of_range("Slice bounds out of range");
     }
-    std::size_t offset = dim.start * old_strides[current_dim];
-    ns[current_dim] = dim.stop - dim.start;
+    std::size_t offset = start * old_strides[current_dim];
+    ns[current_dim] = stop - start;
     keep_dim[current_dim] = true;
     return offset;
 }
