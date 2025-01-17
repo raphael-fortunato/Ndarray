@@ -5,13 +5,15 @@
 
 namespace slice {
 struct slice {
-    slice() = default;
+    slice() : start{static_cast<size_t>(-1)}, stop{static_cast<size_t>(-1)} {};
 
-    slice(std::size_t start = -1, std::size_t end = -1)
-        : start{start}, stop{end} {}
+    explicit slice(std::size_t start)
+        : start{start}, stop{static_cast<size_t>(-1)} {}
 
-    std::size_t start{0};
-    std::size_t stop{0};
+    explicit slice(std::size_t start, std::size_t stop)
+        : start{start}, stop{stop} {}
+    std::size_t start{static_cast<size_t>(-1)};
+    std::size_t stop{static_cast<size_t>(-1)};
     std::vector<std::size_t> shape;
     std::vector<std::size_t> strides;
 };

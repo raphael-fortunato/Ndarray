@@ -22,6 +22,9 @@ by libraries like NumPy.
 Tensor<int,1> a{10, 11, 12};
 Tensor<int,2> b{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
+TensorRef c = b(1);
+auto shape = c.shape(); // {3}
+
 ```
 
 # Roadmap
