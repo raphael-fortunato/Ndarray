@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstddef>
-#include <vector>
 
 namespace slice {
 struct slice {
@@ -17,7 +16,5 @@ struct slice {
 
     std::size_t start{static_cast<std::size_t>(-1)};
     std::size_t stop{static_cast<std::size_t>(-1)};
-    std::vector<std::size_t> shape;
-    std::vector<std::size_t> strides;
 };
 }  // namespace slice

@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdio>
+#include <shape.hpp>
 #include <tensor_ref.hpp>
 #include <utility>
 
@@ -24,11 +25,9 @@ class Tensor : public TensorBase<dtype, N> {
 
     explicit Tensor(tensor_impl::tensor_initializer<dtype, N> init) {
         printf("Constructor\n");
-        this->m_shape = tensor_impl::derive_shape<N>(init);
-        this->m_size = m_compute_size(this->m_shape);
-        m_allocate_data();
+        this->desc = details::Descriptor(tensor_impl::derive_shape<N>(init));
+        m_allocate_data(this->size());
         tensor_impl::insert_flat(init, this->m_data);
-        this->m_strides = m_compute_strides(this->m_shape);
         assert(this->end() - this->begin() == this->size());
     }
 
@@ -36,10 +35,8 @@ class Tensor : public TensorBase<dtype, N> {
         requires tensor_impl::AllConvertibleToSizeT<Args...>
     explicit Tensor(Args... args) {
         printf("Constructor\n");
-        this->m_shape = {static_cast<std::size_t>(args)...};
-        this->m_size = m_compute_size(this->m_shape);
-        m_allocate_data();
-        this->m_strides = m_compute_strides(this->m_shape);
+        this->desc = details::Descriptor(args...);
+        m_allocate_data(this->size());
         assert(this->end() - this->begin() == this->size());
     }
 
@@ -76,13 +73,13 @@ class Tensor : public TensorBase<dtype, N> {
     }
 
    private:
-    void m_allocate_data();
+    void m_allocate_data(std::size_t);
 };
 
 template <typename dtype, std::size_t N>
-void Tensor<dtype, N>::m_allocate_data() {
-    this->m_data = new dtype[this->m_size];
-    this->m_end_itr = this->m_data + this->m_size;
+void Tensor<dtype, N>::m_allocate_data(std::size_t size) {
+    this->m_data = new dtype[size];
+    this->m_end_itr = this->m_data + size;
 }
 
 }  // namespace tensor

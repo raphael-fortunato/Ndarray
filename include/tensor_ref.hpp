@@ -7,13 +7,16 @@ class TensorRef : public TensorBase<dtype, N> {
    public:
     TensorRef() = delete;
 
-    TensorRef(dtype* data, std::vector<std::size_t> shape,
-              std::vector<std::size_t> strides) {
+    TensorRef(dtype* data, std::vector<std::size_t>&& shape,
+              std::vector<std::size_t>&& strides) {
         this->m_data = data;
-        this->m_shape = std::forward<std::vector<std::size_t>>(shape);
-        this->m_strides = std::forward<std::vector<std::size_t>>(strides);
-        this->m_size = m_compute_size(this->m_shape);
-        this->m_end_itr = data + this->m_size;
+        this->desc = details::Descriptor(std::move(shape), std::move(strides));
+        this->m_end_itr = data + this->size();
+    }
+    TensorRef(dtype* data, details::Descriptor&& desc) {
+        this->m_data = data;
+        this->desc = std::forward<details::Descriptor>(desc);
+        this->m_end_itr = data + this->size();
     }
 };
 }  // namespace tensor
