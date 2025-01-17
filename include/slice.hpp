@@ -12,6 +12,7 @@ struct slice {
 
     explicit slice(std::size_t start, std::size_t stop)
         : start{start}, stop{stop} {}
+
     std::size_t start{static_cast<size_t>(-1)};
     std::size_t stop{static_cast<size_t>(-1)};
     std::vector<std::size_t> shape;

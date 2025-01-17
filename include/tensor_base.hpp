@@ -1,4 +1,5 @@
 #pragma once
+#include <array>
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
@@ -79,7 +80,7 @@ class TensorBase {
         static_assert(sizeof...(args) == N, "Invalid number of arguments");
         const std::array<std::size_t, N> indices{
             static_cast<std::size_t>(args)...};
-        std::size_t linear_index = 0;
+        std::size_t linear_index{0};
         for (std::size_t i = 0; i < N; ++i) {
             if (indices[i] >= this->m_shape[i]) {
                 throw std::out_of_range("Index out of range");
@@ -105,7 +106,7 @@ class TensorBase {
         std::vector<bool> keep_dim(this->m_shape.size(), true);
         std::size_t offset = slice_impl::do_slice(
             this->m_shape, new_shape, this->m_strides, new_strides, keep_dim,
-            std::size_t(0), args...);
+            std::size_t{0}, args...);
         std::vector<std::size_t> final_shape;
         std::vector<std::size_t> final_strides;
         for (std::size_t i = 0; i < keep_dim.size(); ++i) {
