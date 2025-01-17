@@ -1,6 +1,6 @@
 file(GLOB TEST_FILES *.cpp)
 # Add an executable for testing
-add_executable(TestNDArray ${TEST_FILES})
+add_executable(TestTensorLibpp ${TEST_FILES})
 
 set(gtest_force_shared_crt on)
 include(FetchContent)
@@ -12,10 +12,10 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 # Link the main project's library to the tests
-target_link_libraries(TestNDArray PRIVATE gtest gtest_main gmock)
-target_link_libraries(TestNDArray PRIVATE NDArray)
+target_link_libraries(TestTensorLibpp PRIVATE gtest gtest_main gmock)
+target_link_libraries(TestTensorLibpp PRIVATE TensorLibpp)
 
 # Add test cases (if using a testing framework like Google Test, Catch2, etc.)
 enable_testing()
-add_test(NAME TestNDArray COMMAND TestNDArray)
-gtest_discover_tests(TestNDArray)
+add_test(NAME TestTensorLibpp COMMAND TestTensorLibpp)
+gtest_discover_tests(TestTensorLibpp)

@@ -1,7 +1,9 @@
 #pragma once
+#include <array>
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
+#include <slice_impl.hpp>
 #include <tensor_impl.hpp>
 
 namespace tensor {
@@ -74,11 +76,11 @@ class TensorBase {
 
     template <typename... Args>
         requires tensor_impl::ValidateElementReturn<N, Args...>
-    dtype operator()(Args&&... args) {
+    inline dtype operator()(Args&&... args) {
         static_assert(sizeof...(args) == N, "Invalid number of arguments");
         const std::array<std::size_t, N> indices{
             static_cast<std::size_t>(args)...};
-        std::size_t linear_index = 0;
+        std::size_t linear_index{0};
         for (std::size_t i = 0; i < N; ++i) {
             if (indices[i] >= this->m_shape[i]) {
                 throw std::out_of_range("Index out of range");
@@ -91,25 +93,32 @@ class TensorBase {
 
     template <typename... Args>
         requires tensor_impl::ValidateTensorRefReturn<N, Args...>
-    TensorRef<dtype, N - sizeof...(Args)> operator()(Args&&... args) {
+    inline TensorRef<dtype, N - sizeof...(Args)> operator()(
+        const Args&... args) {
         static_assert(sizeof...(args) < N, "Invalid number of arguments");
-        std::array<std::size_t, sizeof...(args)> indices{
-            static_cast<std::size_t>(args)...};
 
-        std::vector<std::size_t> new_shape(
-            this->m_shape.begin() + indices.size(), this->m_shape.end());
-        std::vector<std::size_t> new_strides(
-            this->m_strides.begin() + indices.size(), this->m_strides.end());
+        std::vector<std::size_t> new_shape(this->m_shape.begin(),
+                                           this->m_shape.end());
 
-        std::size_t offset = 0;
-        for (std::size_t i = 0; i < indices.size(); ++i) {
-            assert(indices[i] < this->m_shape[i] &&
-                   "Index out of bounds: index exceeds shape dimension");
-            offset += indices[i] * this->m_strides[i];
+        std::vector<std::size_t> new_strides(this->m_strides.begin(),
+                                             this->m_strides.end());
+
+        std::vector<bool> keep_dim(this->m_shape.size(), true);
+        std::size_t offset = slice_impl::do_slice(
+            this->m_shape, new_shape, this->m_strides, new_strides, keep_dim,
+            std::size_t{0}, args...);
+        std::vector<std::size_t> final_shape;
+        std::vector<std::size_t> final_strides;
+        for (std::size_t i = 0; i < keep_dim.size(); ++i) {
+            if (keep_dim[i]) {
+                final_shape.push_back(new_shape[i]);
+                final_strides.push_back(new_strides[i]);
+            }
         }
+
         return TensorRef<dtype, N - sizeof...(Args)>(this->m_data + offset,
-                                                     std::move(new_shape),
-                                                     std::move(new_strides));
+                                                     std::move(final_shape),
+                                                     std::move(final_strides));
     }
 
     using value_type = dtype;

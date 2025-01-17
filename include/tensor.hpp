@@ -1,12 +1,11 @@
 /*
- * This is the header file for the Ndarray class.
+ * This is the header file for the TensorLib++ class.
  * This class is the base class of a multi-dimensional array.
- * Every ndarray array needs a data_type T, shape, and strides.
+ * Every tensor array needs a data_type T, shape, and strides.
  */
 #pragma once
 
 #include <algorithm>
-#include <array>
 #include <cstddef>
 #include <cstdio>
 #include <tensor_ref.hpp>
@@ -20,7 +19,9 @@ template <typename dtype, std::size_t N>
 class Tensor : public TensorBase<dtype, N> {
    public:
     using value_type = dtype;
+
     Tensor() = delete;
+
     explicit Tensor(tensor_impl::tensor_initializer<dtype, N> init) {
         printf("Constructor\n");
         this->m_shape = tensor_impl::derive_shape<N>(init);
@@ -46,6 +47,7 @@ class Tensor : public TensorBase<dtype, N> {
         printf("Destructor\n");
         delete[] this->m_data;
     }
+
     Tensor& operator=(const Tensor& other) {
         printf("Copy assignment\n");
         if (this != &other) {
@@ -58,6 +60,7 @@ class Tensor : public TensorBase<dtype, N> {
     Tensor(const Tensor& other) : TensorBase<dtype, N>(other) {
         printf("Copy constructor\n");
     }
+
     Tensor(Tensor&& other) noexcept
         : TensorBase<dtype, N>(std::forward<Tensor>(other)) {
         printf("Move constructor\n");
