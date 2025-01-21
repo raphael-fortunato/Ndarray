@@ -1,6 +1,7 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
+#include <shape.hpp>
 #include <slice.hpp>
 #include <stdexcept>
 #include <vector>
@@ -9,62 +10,58 @@ namespace tensor {
 
 namespace slice_impl {
 
-inline std::size_t do_slice(const std::vector<std::size_t>& os,
-                            const std::vector<std::size_t>& ns,
-                            const std::vector<std::size_t>& old_strides,
-                            const std::vector<std::size_t>& new_strides,
-                            std::vector<bool>& keep_dim,
+template <std::size_t N>
+inline std::size_t do_slice(const details::Descriptor& old_desc,
+                            details::Descriptor& new_desc,
+                            std::array<bool, N>& keep_dim,
                             const std::size_t current_dim) {
     return 0;
 }
 
-inline std::size_t do_slice_dim(const std::vector<std::size_t>& os,
-                                std::vector<std::size_t>& ns,
-                                const std::vector<std::size_t>& old_strides,
-                                std::vector<std::size_t>& new_strides,
-                                std::vector<bool>& keep_dim,
+template <std::size_t N>
+inline std::size_t do_slice_dim(const details::Descriptor& old_desc,
+                                details::Descriptor& new_desc,
+                                std::array<bool, N>& keep_dim,
                                 const std::size_t current_dim,
                                 const std::size_t dim) {
-    if (dim >= os[current_dim]) {
+    if (dim >= old_desc.shape()[current_dim]) {
         throw std::out_of_range("Index out of range");
     }
-    std::size_t offset = dim * old_strides[current_dim];
+    std::size_t offset = dim * old_desc.strides()[current_dim];
     keep_dim[current_dim] = false;
     return offset;
 }
 
-inline std::size_t do_slice_dim(const std::vector<std::size_t>& os,
-                                std::vector<std::size_t>& ns,
-                                const std::vector<std::size_t>& old_strides,
-                                const std::vector<std::size_t>& new_strides,
-                                std::vector<bool>& keep_dim,
+template <std::size_t N>
+inline std::size_t do_slice_dim(const details::Descriptor& old_desc,
+                                details::Descriptor& new_desc,
+                                std::array<bool, N>& keep_dim,
                                 const std::size_t current_dim,
                                 const slice::slice& dim) {
     std::size_t start =
         (dim.start == static_cast<std::size_t>(-1)) ? 0 : dim.start;
-    std::size_t stop =
-        (dim.stop == static_cast<std::size_t>(-1)) ? os[current_dim] : dim.stop;
-    if (start > os[current_dim] || stop > os[current_dim]) {
+    std::size_t stop = (dim.stop == static_cast<std::size_t>(-1))
+                           ? old_desc.shape()[current_dim]
+                           : dim.stop;
+    if (start > old_desc.shape()[current_dim] ||
+        stop > old_desc.shape()[current_dim]) {
         throw std::out_of_range("Slice bounds out of range");
     }
-    std::size_t offset = start * old_strides[current_dim];
-    ns[current_dim] = stop - start;
-    keep_dim[current_dim] = true;
+    std::size_t offset = start * old_desc.strides()[current_dim];
+    new_desc.shape()[current_dim] = stop - start;
     return offset;
 }
 
-template <typename T, typename... Args>
-inline std::size_t do_slice(const std::vector<std::size_t>& os,
-                            std::vector<std::size_t>& ns,
-                            const std::vector<std::size_t>& old_strides,
-                            std::vector<std::size_t>& new_strides,
-                            std::vector<bool>& keep_dim,
+template <std::size_t N, typename T, typename... Args>
+inline std::size_t do_slice(const details::Descriptor& old_desc,
+                            details::Descriptor& new_desc,
+                            std::array<bool, N>& keep_dim,
                             std::size_t current_dim, const T& dim,
                             const Args&... args) {
-    std::size_t m = do_slice_dim(os, ns, old_strides, new_strides, keep_dim,
-                                 current_dim, dim);
-    std::size_t n = do_slice(os, ns, old_strides, new_strides, keep_dim,
-                             ++current_dim, args...);
+    std::size_t m =
+        do_slice_dim(old_desc, new_desc, keep_dim, current_dim, dim);
+    std::size_t n =
+        do_slice(old_desc, new_desc, keep_dim, ++current_dim, args...);
     return m + n;
 }
 

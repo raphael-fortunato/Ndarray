@@ -115,14 +115,13 @@ void insert_flat(std::initializer_list<T> data, dtype* ptr) {
     add_flattened_data(data.begin(), data.end(), ptr);
 }
 
-}  // namespace tensor_impl
-
-inline std::size_t m_compute_size(const std::vector<std::size_t>& shape) {
-    return std::accumulate(shape.begin(), shape.end(), size_t(1),
-                           std::multiplies<>());
+inline std::size_t compute_size(const std::vector<std::size_t>& shape) {
+    return shape.empty() ? 0
+                         : std::reduce(shape.begin(), shape.end(),
+                                       std::size_t(1), std::multiplies<>());
 }
 
-inline std::vector<std::size_t> m_compute_strides(
+inline std::vector<std::size_t> compute_strides(
     const std::vector<std::size_t>& shape) {
     std::vector<std::size_t> strides(shape.size());
     if (shape.empty()) {
@@ -134,6 +133,7 @@ inline std::vector<std::size_t> m_compute_strides(
     }
     return strides;
 }
+}  // namespace tensor_impl
 
 }  // namespace tensor
 //
