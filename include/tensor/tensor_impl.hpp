@@ -4,7 +4,8 @@
 #include <cstddef>
 #include <initializer_list>
 #include <numeric>
-#include <slice.hpp>
+
+#include "tensor/slice.hpp"
 
 namespace tensor {
 

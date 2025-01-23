@@ -1,10 +1,11 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
-#include <shape.hpp>
-#include <slice.hpp>
 #include <stdexcept>
 #include <vector>
+
+#include "tensor/shape.hpp"
+#include "tensor/slice.hpp"
 
 namespace tensor {
 

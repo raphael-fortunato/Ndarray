@@ -1,5 +1,5 @@
 #pragma once
-#include "tensor_base.hpp"
+#include "tensor/tensor_base.hpp"
 
 namespace tensor {
 template <typename dtype, std::size_t N>

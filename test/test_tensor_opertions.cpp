@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "gmock/gmock.h"
-#include "tensor.hpp"
+#include "tensorlibpp.hpp"
 
 using namespace tensor;
 

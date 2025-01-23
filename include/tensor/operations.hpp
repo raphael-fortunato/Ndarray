@@ -1,7 +1,8 @@
 #pragma once
 
 #include <cstddef>
-#include <tensor_base.hpp>
+
+#include "tensor/tensor_base.hpp"
 namespace tensor {
 
 // Scalar in place operations

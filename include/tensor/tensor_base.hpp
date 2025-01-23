@@ -3,9 +3,10 @@
 #include <cassert>
 #include <cstddef>
 #include <cstdio>
-#include <shape.hpp>
-#include <slice_impl.hpp>
-#include <tensor_impl.hpp>
+
+#include "slice_impl.hpp"
+#include "tensor/shape.hpp"
+#include "tensor/tensor_impl.hpp"
 
 namespace tensor {
 
