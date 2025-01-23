@@ -65,6 +65,30 @@ class TensorBase {
         return *this;
     }
 
+    // Scalar Operations
+    TensorBase& operator+=(const dtype&);
+    TensorBase& operator-=(const dtype&);
+    TensorBase& operator*=(const dtype&);
+    TensorBase& operator/=(const dtype&);
+    TensorBase& operator%=(const dtype&);
+
+    // Matrix Operations
+    // template <typename M>
+    //     requires tensor_impl::TensorType<dtype, N, M>
+    // TensorBase& operator+=(const M&);
+    // template <typename M>
+    //     requires tensor_impl::TensorType<dtype, N, M>
+    // TensorBase& operator-=(const M&);
+    // template <typename M>
+    //     requires tensor_impl::TensorType<dtype, N, M>
+    // TensorBase& operator*=(const M&);
+    // template <typename M>
+    //     requires tensor_impl::TensorType<dtype, N, M>
+    // TensorBase& operator/=(const M&);
+    // template <typename M>
+    //     requires tensor_impl::TensorType<dtype, N, M>
+    // TensorBase& operator%=(const M&);
+
     template <typename... Args>
         requires tensor_impl::ValidateElementReturn<N, Args...>
     inline dtype operator()(Args&&... args) {
@@ -112,8 +136,8 @@ class TensorBase {
 
     virtual ~TensorBase() {}
     using value_type = dtype;
-    dtype* cbegin() const { return m_data; }
-    dtype* cend() const { return m_end_itr; }
+    dtype* begin() { return m_data; }
+    dtype* end() { return m_end_itr; }
     const dtype* begin() const { return m_data; }
     const dtype* end() const { return m_end_itr; }
     const size_t size() const { return desc.size(); }
@@ -122,6 +146,7 @@ class TensorBase {
     const std::vector<dtype> data() const {
         return std::vector<dtype>(m_data, m_data + size());
     }
+    static constexpr std::size_t order() { return N; }
 
    protected:
     TensorBase() = default;

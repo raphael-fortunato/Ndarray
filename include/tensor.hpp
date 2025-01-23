@@ -12,10 +12,12 @@
 #include <tensor_ref.hpp>
 #include <utility>
 
+#include "operations.hpp"
 #include "tensor_base.hpp"
 #include "tensor_impl.hpp"
 
 namespace tensor {
+
 template <typename dtype, std::size_t N>
 class Tensor : public TensorBase<dtype, N> {
    public:
