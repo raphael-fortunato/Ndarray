@@ -13,9 +13,7 @@ FetchContent_MakeAvailable(googletest)
 include(GoogleTest)
 # Link the main project's library to the tests
 target_link_libraries(TestTensorLibpp PRIVATE gtest gtest_main gmock)
-target_link_libraries(TestTensorLibpp PRIVATE TensorLibpp)
 
 # Add test cases (if using a testing framework like Google Test, Catch2, etc.)
-enable_testing()
 add_test(NAME TestTensorLibpp COMMAND TestTensorLibpp)
 gtest_discover_tests(TestTensorLibpp)

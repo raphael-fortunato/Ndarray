@@ -70,6 +70,7 @@ jobs:
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCODE_TEST=ON
         -S ${{ github.workspace }}
 
     - name: Build
@@ -111,7 +112,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          cmake .. -DCMAKE_BUILD_TYPE=Debug && cmake --build .
+          cmake -DCMAKE_BUILD_TYPE=Debug -DCODE_COVERAGE=ON -DCODE_TEST=ON .. && make && make test
         env:
           CC: gcc-14
           CXX: g++-14
