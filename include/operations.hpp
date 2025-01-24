@@ -73,10 +73,52 @@ TensorBase<dtype, N> operator%(const TensorBase<dtype, N>& tensor,
 template <typename dtype, std::size_t N>
 template <typename M>
     requires tensor_impl::TensorType<dtype, N, M>
-TensorBase<dtype, N>& TensorBase<dtype, N>::operator+=(const M& other) {
+inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator+=(const M& other) {
     static_assert(this->order() == other.order(), "+= Order mismatch");
     assert(this->size() == other.size() && "+= Size mismatch");
-    std::ranges::transform(*this, other, *this, std::plus<dtype>{});
+    std::transform(this->begin(), this->end(), other.begin(), this->begin(),
+                   std::plus<dtype>{});
+    return *this;
+}
+template <typename dtype, std::size_t N>
+template <typename M>
+    requires tensor_impl::TensorType<dtype, N, M>
+inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator-=(const M& other) {
+    static_assert(this->order() == other.order(), "-= Order mismatch");
+    assert(this->size() == other.size() && "-= Size mismatch");
+    std::transform(this->begin(), this->end(), other.begin(), this->begin(),
+                   std::minus<dtype>{});
+    return *this;
+}
+template <typename dtype, std::size_t N>
+template <typename M>
+    requires tensor_impl::TensorType<dtype, N, M>
+inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator*=(const M& other) {
+    static_assert(this->order() == other.order(), "*= Order mismatch");
+    assert(this->size() == other.size() && "*= Size mismatch");
+    std::transform(this->begin(), this->end(), other.begin(), this->begin(),
+                   std::multiplies<dtype>{});
+    return *this;
+}
+
+template <typename dtype, std::size_t N>
+template <typename M>
+    requires tensor_impl::TensorType<dtype, N, M>
+inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator/=(const M& other) {
+    static_assert(this->order() == other.order(), "/= Order mismatch");
+    assert(this->size() == other.size() && "/= Size mismatch");
+    std::transform(this->begin(), this->end(), other.begin(), this->begin(),
+                   std::divides<dtype>{});
+    return *this;
+}
+template <typename dtype, std::size_t N>
+template <typename M>
+    requires tensor_impl::TensorType<dtype, N, M>
+inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator%=(const M& other) {
+    static_assert(this->order() == other.order(), "%= Order mismatch");
+    assert(this->size() == other.size() && "%= Size mismatch");
+    std::transform(this->begin(), this->end(), other.begin(), this->begin(),
+                   std::modulus<dtype>{});
     return *this;
 }
 

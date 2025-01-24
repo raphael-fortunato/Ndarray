@@ -38,8 +38,16 @@ TEST(TensorTest, TestScalarOperations) {
     ASSERT_THAT(test_array7, ::testing::ElementsAre(1, 1, 1, 1));
 }
 TEST(TensorTest, TestMatrixOperations) {
-    Tensor<double, 2> test_array1{{1, 2}, {3, 4}};
-    Tensor<double, 2> test_array2{{1, 2}, {3, 4}};
+    Tensor<int, 2> test_array1{{1, 2}, {3, 4}};
+    Tensor<int, 2> test_array2{{1, 2}, {3, 4}};
     test_array1 += test_array2;
     ASSERT_THAT(test_array1, ::testing::ElementsAre(2, 4, 6, 8));
+    test_array1 -= test_array2;
+    ASSERT_THAT(test_array1, ::testing::ElementsAre(1, 2, 3, 4));
+    test_array1 *= test_array2;
+    ASSERT_THAT(test_array1, ::testing::ElementsAre(1, 4, 9, 16));
+    test_array1 /= test_array2;
+    ASSERT_THAT(test_array1, ::testing::ElementsAre(1, 2, 3, 4));
+    test_array1 %= test_array2;
+    ASSERT_THAT(test_array1, ::testing::ElementsAre(0, 0, 0, 0));
 }

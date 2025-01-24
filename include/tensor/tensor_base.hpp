@@ -76,19 +76,19 @@ class TensorBase {
     // Matrix Operations
     template <typename M>
         requires tensor_impl::TensorType<dtype, N, M>
-    TensorBase& operator+=(const M&);
-    // template <typename M>
-    //     requires tensor_impl::TensorType<dtype, N, M>
-    // TensorBase& operator-=(const M&);
-    // template <typename M>
-    //     requires tensor_impl::TensorType<dtype, N, M>
-    // TensorBase& operator*=(const M&);
-    // template <typename M>
-    //     requires tensor_impl::TensorType<dtype, N, M>
-    // TensorBase& operator/=(const M&);
-    // template <typename M>
-    //     requires tensor_impl::TensorType<dtype, N, M>
-    // TensorBase& operator%=(const M&);
+    inline TensorBase& operator+=(const M&);
+    template <typename M>
+        requires tensor_impl::TensorType<dtype, N, M>
+    TensorBase& operator-=(const M&);
+    template <typename M>
+        requires tensor_impl::TensorType<dtype, N, M>
+    TensorBase& operator*=(const M&);
+    template <typename M>
+        requires tensor_impl::TensorType<dtype, N, M>
+    TensorBase& operator/=(const M&);
+    template <typename M>
+        requires tensor_impl::TensorType<dtype, N, M>
+    TensorBase& operator%=(const M&);
 
     template <typename... Args>
         requires tensor_impl::ValidateElementReturn<N, Args...>
