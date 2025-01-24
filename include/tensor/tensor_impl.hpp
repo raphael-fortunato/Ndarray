@@ -4,9 +4,14 @@
 #include <cstddef>
 #include <initializer_list>
 #include <numeric>
-#include <slice.hpp>
+
+#include "tensor/slice.hpp"
 
 namespace tensor {
+
+template <typename dtype, std::size_t N>
+class TensorBase;
+
 namespace tensor_impl {
 
 template <typename dtype, std::size_t N>
@@ -43,13 +48,19 @@ concept ValidArgs =
 template <typename... Args>
 concept AllConvertibleToSizeT = (std::convertible_to<Args, std::size_t> && ...);
 
+// Requires that all elements are
 template <std::size_t N, typename... Args>
 concept ValidateTensorRefReturn =
     (sizeof...(Args) < N) && (ValidArgs<Args> && ...);
 
+// Requires that all elements are size_t and the number of elements is equal to
+// N
 template <std::size_t N, typename... Args>
 concept ValidateElementReturn =
     (sizeof...(Args) == N) && AllConvertibleToSizeT<Args...>;
+
+template <typename dtype, std::size_t N, typename M>
+concept TensorType = std::is_same<TensorBase<dtype, N>, M>::value;
 
 template <std::size_t N>
 bool check_bounds(const std::vector<std::size_t>& s,

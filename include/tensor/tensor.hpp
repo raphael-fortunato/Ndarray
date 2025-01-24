@@ -8,14 +8,16 @@
 #include <algorithm>
 #include <cstddef>
 #include <cstdio>
-#include <shape.hpp>
-#include <tensor_ref.hpp>
 #include <utility>
 
-#include "tensor_base.hpp"
-#include "tensor_impl.hpp"
+#include "tensor/operations.hpp"
+#include "tensor/shape.hpp"
+#include "tensor/tensor_base.hpp"
+#include "tensor/tensor_impl.hpp"
+#include "tensor/tensor_ref.hpp"
 
 namespace tensor {
+
 template <typename dtype, std::size_t N>
 class Tensor : public TensorBase<dtype, N> {
    public:

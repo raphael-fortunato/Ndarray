@@ -2,7 +2,7 @@
 
 #include <vector>
 
-#include "tensor_impl.hpp"
+#include "tensor/tensor_impl.hpp"
 
 namespace tensor {
 namespace details {
