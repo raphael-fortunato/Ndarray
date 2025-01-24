@@ -1,7 +1,6 @@
 
-#include "tensor/operations.hpp"
-#include "tensor/shape.hpp"
-#include "tensor/slice.hpp"
-#include "tensor/tensor.hpp"
-
+#include "operations.hpp"         // IWYU pragma: keep
+#include "tensor/slice.hpp"       // IWYU pragma: keep
+#include "tensor/tensor.hpp"      // IWYU pragma: keep
+#include "tensor/tensor_ref.hpp"  // IWYU pragma: keep
 namespace tensor {}

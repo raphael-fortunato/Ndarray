@@ -10,11 +10,9 @@
 #include <cstdio>
 #include <utility>
 
-#include "tensor/operations.hpp"
 #include "tensor/shape.hpp"
 #include "tensor/tensor_base.hpp"
 #include "tensor/tensor_impl.hpp"
-#include "tensor/tensor_ref.hpp"
 
 namespace tensor {
 
