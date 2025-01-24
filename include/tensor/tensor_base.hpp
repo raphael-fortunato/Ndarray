@@ -74,9 +74,9 @@ class TensorBase {
     TensorBase& operator%=(const dtype&);
 
     // Matrix Operations
-    // template <typename M>
-    //     requires tensor_impl::TensorType<dtype, N, M>
-    // TensorBase& operator+=(const M&);
+    template <typename M>
+        requires tensor_impl::TensorType<dtype, N, M>
+    TensorBase& operator+=(const M&);
     // template <typename M>
     //     requires tensor_impl::TensorType<dtype, N, M>
     // TensorBase& operator-=(const M&);

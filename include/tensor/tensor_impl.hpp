@@ -60,7 +60,7 @@ concept ValidateElementReturn =
     (sizeof...(Args) == N) && AllConvertibleToSizeT<Args...>;
 
 template <typename dtype, std::size_t N, typename M>
-concept TensorType = std::is_same<TensorBase<dtype, N>, M>::value;
+concept TensorType = std::is_base_of<TensorBase<dtype, N>, M>::value;
 
 template <std::size_t N>
 bool check_bounds(const std::vector<std::size_t>& s,
