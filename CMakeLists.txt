@@ -5,7 +5,7 @@ project(TensorLibpp VERSION 1.0)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_COMPILE_WARNING_AS_ERROR ON)
-set(CMAKE_CXX_FLAGS_DEBUG "-std=c++11 -Wno-deprecated-register -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
+set(CMAKE_CXX_FLAGS_DEBUG "-std=c++11 -O0 -g -fprofile-arcs -ftest-coverage ${CMAKE_CXX_FLAGS_DEBUG}")
 option(CODE_COVERAGE "Enable coverage reporting" OFF)
 option(CODE_TEST "Enable tests" OFF)
 
@@ -20,8 +20,8 @@ include_directories(include)
 
 if(CODE_TEST)
     message(STATUS "Test code enabled")
-    add_subdirectory(test)
     enable_testing()
+    add_subdirectory(test)
 endif()
 
 if(CODE_COVERAGE)

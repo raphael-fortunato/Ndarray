@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cassert>
 #include <cstddef>
+#include <stdexcept>
 
 #include "tensor/tensor_base.hpp"
 
@@ -74,8 +76,10 @@ template <typename dtype, std::size_t N>
 template <typename M>
     requires tensor_impl::TensorType<dtype, N, M>
 inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator+=(const M& other) {
-    static_assert(this->order() == other.order(), "+= Order mismatch");
-    assert(this->size() == other.size() && "+= Size mismatch");
+    static_assert(TensorBase::order() == M::order(), "+= Order mismatch");
+    if (this->size() != other.size()) {
+        throw std::out_of_range("+= Size mismatch");
+    }
     std::transform(this->begin(), this->end(), other.begin(), this->begin(),
                    std::plus<dtype>{});
     return *this;
@@ -84,8 +88,10 @@ template <typename dtype, std::size_t N>
 template <typename M>
     requires tensor_impl::TensorType<dtype, N, M>
 inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator-=(const M& other) {
-    static_assert(this->order() == other.order(), "-= Order mismatch");
-    assert(this->size() == other.size() && "-= Size mismatch");
+    static_assert(TensorBase::order() == M::order(), "-= Order mismatch");
+    if (this->size() != other.size()) {
+        throw std::out_of_range("-= Size mismatch");
+    }
     std::transform(this->begin(), this->end(), other.begin(), this->begin(),
                    std::minus<dtype>{});
     return *this;
@@ -94,8 +100,10 @@ template <typename dtype, std::size_t N>
 template <typename M>
     requires tensor_impl::TensorType<dtype, N, M>
 inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator*=(const M& other) {
-    static_assert(this->order() == other.order(), "*= Order mismatch");
-    assert(this->size() == other.size() && "*= Size mismatch");
+    static_assert(TensorBase::order() == M::order(), "*= Order mismatch");
+    if (this->size() != other.size()) {
+        throw std::out_of_range("*= Size mismatch");
+    }
     std::transform(this->begin(), this->end(), other.begin(), this->begin(),
                    std::multiplies<dtype>{});
     return *this;
@@ -105,8 +113,10 @@ template <typename dtype, std::size_t N>
 template <typename M>
     requires tensor_impl::TensorType<dtype, N, M>
 inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator/=(const M& other) {
-    static_assert(this->order() == other.order(), "/= Order mismatch");
-    assert(this->size() == other.size() && "/= Size mismatch");
+    static_assert(TensorBase::order() == M::order(), "/= Order mismatch");
+    if (this->size() != other.size()) {
+        throw std::out_of_range("/= Size mismatch");
+    }
     std::transform(this->begin(), this->end(), other.begin(), this->begin(),
                    std::divides<dtype>{});
     return *this;
@@ -115,11 +125,50 @@ template <typename dtype, std::size_t N>
 template <typename M>
     requires tensor_impl::TensorType<dtype, N, M>
 inline TensorBase<dtype, N>& TensorBase<dtype, N>::operator%=(const M& other) {
-    static_assert(this->order() == other.order(), "%= Order mismatch");
-    assert(this->size() == other.size() && "%= Size mismatch");
+    static_assert(TensorBase::order() == M::order(), "%= Order mismatch");
+    if (this->size() != other.size()) {
+        throw std::out_of_range("%= Size mismatch");
+    }
     std::transform(this->begin(), this->end(), other.begin(), this->begin(),
                    std::modulus<dtype>{});
     return *this;
+}
+
+// Matrix operations
+template <typename dtype, std::size_t N>
+TensorBase<dtype, N> operator+(const TensorBase<dtype, N>& tensor,
+                               const TensorBase<dtype, N>& other) {
+    TensorBase result = tensor;
+    result += other;
+    return result;
+}
+template <typename dtype, std::size_t N>
+TensorBase<dtype, N> operator-(const TensorBase<dtype, N>& tensor,
+                               const TensorBase<dtype, N>& other) {
+    TensorBase result = tensor;
+    result -= other;
+    return result;
+}
+template <typename dtype, std::size_t N>
+TensorBase<dtype, N> operator*(const TensorBase<dtype, N>& tensor,
+                               const TensorBase<dtype, N>& other) {
+    TensorBase result = tensor;
+    result *= other;
+    return result;
+}
+template <typename dtype, std::size_t N>
+TensorBase<dtype, N> operator/(const TensorBase<dtype, N>& tensor,
+                               const TensorBase<dtype, N>& other) {
+    TensorBase result = tensor;
+    result /= other;
+    return result;
+}
+template <typename dtype, std::size_t N>
+TensorBase<dtype, N> operator%(const TensorBase<dtype, N>& tensor,
+                               const TensorBase<dtype, N>& other) {
+    TensorBase result = tensor;
+    result %= other;
+    return result;
 }
 
 }  // namespace tensor
